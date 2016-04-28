@@ -1,0 +1,117 @@
+-----------------------------
+2h45m_26Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 5
+LDA Topics: 100
+RUNTIME: 0:03:38.156595
+-----------------------------
+-----------------------------
+2h54m_26Apr
+full_train
+Range of docs: (0, 270000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 5
+LDA Topics: 100
+RUNTIME: 0:03:56.536836
+---------------------------------------------------------------------------------------
+10h20m_27Apr
+full_train
+Range of docs: (0, 270000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 4
+LDA Topics: 20
+RUNTIME: 1:22:42.855055
+-----------------------------
+-----------------------------
+11h22m_27Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 4
+LDA Topics: 20
+LDA Train Chunksize: 5000
+RUNTIME: 0:07:52.159694
+-----------------------------
+-----------------------------
+11h40m_27Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 4
+LDA Topics: 20
+LDA Train Chunksize: 5000
+RUNTIME: 0:06:40.012317
+-----------------------------
+-----------------------------
+11h57m_27Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 10
+LDA Passes: 4
+LDA Topics: 50
+LDA Train Chunksize: 300
+RUNTIME: 0:13:18.786642
+-----------------------------
+-----------------------------
+6h30m_28Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 10
+LDA Passes: 4
+LDA Topics: 50
+LDA Train Chunksize: 300
+RUNTIME: 0:00:22.713817
+-----------------------------
+-----------------------------
+7h18m_28Apr  - Creating dictionary and corpora
+aws_train
+Range of docs: (0, 310112)
+Corpus Size: 310112
+Dictionary size: 660165
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 10
+LDA Passes: 4
+LDA Topics: 50
+LDA Train Chunksize: 300
+RUNTIME: 0:37:23.067640
+-----------------------------
+
+-----------------------------
+9h32m_28Apr
+aws_train @ georgi-laptop
+Range of docs: (0, 310112)
+Dictionary size: 0
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 5
+LDA Passes: 4
+LDA Topics: 50
+LDA Train Chunksize: 300
+RUNTIME: 0:00:00.000050
+-----------------------------

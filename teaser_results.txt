@@ -1,0 +1,127 @@
+=================================
+=================================
+=Results for the teaser excirces=
+=================================
+=================================
+Apr 7
+[error - lower case]
+model -     model = Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
+No entries were found in our model for 5718 words.
+Correct number of predictions out of all predictions 7585/19544
+
+Apr 7
+[full vocab]
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 14383/19544 [74%]
+It took 0:03:23.452358 to load the model. After that, it took 1h:17m:21sto perform the check
+---------------------
+
+Apr 9
+[20000 Vocab]
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 12769/19544 [65%]
+It took 0h:1m:41s to load the model. After that, it took 0h:0m:36s to perform the check
+
+[30000 Vocab]
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 13783/19544 [70%]
+It took 0h:1m:40s to load the model. After that, it took 0h:0m:57s to perform the check
+
+[40000 Vocab]
+No entries were found in our model for 0 words.
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+Correct number of predictions out of all predictions 14021/19544 [71%]
+It took 0h:1m:41s to load the model. After that, it took 0h:1m:12s to perform the check
+
+[50000 Vocab]
+No entries were found in our model for 0 words.
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+Correct number of predictions out of all predictions 14168/19544 [72%]
+It took 0h:1m:39s to load the model. After that, it took 0h:1m:25s to perform the check
+
+[60000 Vocab]
+No entries were found in our model for 0 words.
+Analogies: questions-words.txt | Model: GoogleNews-vectors-negative300.bin
+Correct number of predictions out of all predictions 14346/19544 [73%]
+It took 0h:1m:46s to load the model. After that, it took 0h:1m:45s to perform the check
+
+[70000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/GoogleNews-vectors-negative300.bin
+Model loaded for [0:01:37.997097]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 14429/19544 [73%]
+It took 0h:1m:37s to load the model. After that, it took 0h:1m:57s to perform the check
+
+[80000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/GoogleNews-vectors-negative300.bin
+Model loaded for [0:03:14.165418]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 14424/19544 [73%]
+It took 0h:3m:14s to load the model. After that, it took 0h:2m:15s to perform the check
+
+[1000000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/GoogleNews-vectors-negative300.bin
+Model loaded for [0:03:22.682348]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 14447/19544 [73%]
+It took 0h:3m:22s to load the model. After that, it took 0h:26m:50s to perform the check
+
+[3 000 000 Vocab] #full vocab
+Analogies: data/warm_up/mrr.txt | Model: data/warm_up/GoogleNews-vectors-negative300.bin
+No entries were found in our model for 899 words.
+Correct number of predictions out of all predictions 5172/8000 [64%]
+It took 0h:3m:22s to load the model. After that, it took 0h:29m:22s to perform the check
+
+-------------
+[400000 Vocab] #full vocab
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/glove.6B.50d.txt
+Model loaded for [0:00:47.529274]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 12334/19544 [63%]
+It took 0h:0m:47s to load the model. After that, it took 0h:4m:29s to perform the check
+
+[80000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/glove.6B.100d.txt
+Model loaded for [0:01:04.887736]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 12371/19544 [63%]
+It took 0h:1m:4s to load the model. After that, it took 0h:1m:5s to perform the check
+
+[80000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/glove.6B.200d.txt
+Model loaded for [0:01:20.881914]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 13662/19544 [69%]
+It took 0h:1m:20s to load the model. After that, it took 0h:1m:34s to perform the check
+
+[80000 Vocab]
+Analogies: data/warm_up/questions-words.txt | Model: data/warm_up/glove.6B.300d.txt
+Model loaded for [0:01:54.378642]
+No entries were found in our model for 0 words.
+Correct number of predictions out of all predictions 14041/19544 [71%]
+It took 0h:1m:54s to load the model. After that, it took 0h:2m:15s to perform the check
+
+[80000 Vocab]
+Analogies: data/warm_up/mrr.txt | Model: data/warm_up/glove.6B.300d.txt
+Model loaded for [0:02:09.107177]
+No entries were found in our model for 1000 words.
+Correct number of predictions out of all predictions 4415/8000 [55%]
+It took 0h:2m:9s to load the model. After that, it took 0h:1m:18s to perform the check
+
+
+[80000 Vocab]
+Analogies: data/warm_up/mrr.txt | Model: data/warm_up/GoogleNews-vectors-negative300.bin
+Model loaded for [0:03:23.436307]
+No entries were found in our model for 899 words.
+Correct number of predictions out of all predictions 4941/8000 [61%]
+It took 0h:3m:23s to load the model. After that, it took 0h:2m:22s to perform the check
+Note: >> "word 'jury's' not in vocabulary".
+
+[400 000 Vocab] #full vocab
+Analogies: data/warm_up/mrr.txt | Model: data/warm_up/glove.6B.300d.txt
+No entries were found in our model for 1000 words.
+Correct number of predictions out of all predictions 4496/8000 [56%]
+It took 0h:2m:21s to load the model. After that, it took 0h:5m:39s to perform the check

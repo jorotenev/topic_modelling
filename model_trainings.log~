@@ -1,0 +1,12 @@
+-----------------------------
+2h45m_26Apr
+dev_train
+Range of docs: (0, 3000)
+VISUAL Scale down factor: 10
+TEXTUAL Scale down factor: 200
+Mixed document length: 200
+Workers: 4
+LDA Passes: 5
+LDA Topics: 100
+RUNTIME: 0:03:38.156595
+-----------------------------
