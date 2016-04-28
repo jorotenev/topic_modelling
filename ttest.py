@@ -29,7 +29,7 @@ class TestingCorpus(object):
 def getVisualWordProbabilitiesForTopic(topic_probabilities):
     """
     it's just a view of a single topic of the model - to access more quickly the probabilities of all visiterm in the whole topic
-
+    
     given an array of (probability, words) pairs, look only for words which are actually labels for visual terms (e.g 'visiterm_1')
     get the id from the label and put it in a list as a tuple together with the probability of the visiwor.
     sort by the id(which is just an index with range 0-4096), then return list with just the probabilities.
@@ -43,7 +43,7 @@ def getVisualWordProbabilitiesForTopic(topic_probabilities):
 
 
 def findProbabilitiesVWordsGivenADocument(lda, topic_probabilities_for_doc, visi_word_probabilities):
-
+    
     """
     Given a document, and a model, see the probabilities of all visual words.
     "Compute the probability of each visual term in the vocabulary, given document D,
@@ -70,12 +70,12 @@ def findProbabilitiesVWordsGivenADocument(lda, topic_probabilities_for_doc, visi
             # P(w|z) - the probability of a visiword for a topic
             prob_of_vword_in_a_topic = visi_word_probabilities[topic_id][index]
             probability_of_visi_term = probability_of_visi_term + prob_of_vword_in_a_topic * topic_prob
-
+            
         probs_of_vwords_given_a_document[index] = probability_of_visi_term
     return probs_of_vwords_given_a_document
 
 def givenProbsFindIdOfBestMatch(visual_matrix, probs):
-
+    
     """
     Find the most likely vwords based on the @probs and find in the @visual_matrix which row has the highes values for these vwords.
     Args:
@@ -83,8 +83,7 @@ def givenProbsFindIdOfBestMatch(visual_matrix, probs):
         :probs - (4096,) array with the probabilities of a vword
     """
     indeces_of_most_likely_words = np.argmax(probs)
-    print(indeces_of_most_likely_words)
-    return
+    pass
 def filterVisualProbabilities(lda, modelFname):
     fName = 'data/'+modelFname + '.visual_probabilities_filtered.npy'
     try:
@@ -111,7 +110,7 @@ def test():
     # this is just the visual features, but loaded in a numpy array. loading from a serialized file for efficiency
     visual_matrix = loadVisualMatrix(config)
     assert visual_matrix.shape[0] == len(img_ids)
-
+    
     logger.info("Loaded all image ids. Size %i." % len(img_ids))
 
     # load the dict
@@ -125,7 +124,7 @@ def test():
 
     modelFname = 'lda_100_topics_5_passes_4h58m_25Apr.model'
     modelPath = config.model_folder + modelFname
-
+    
     lda = gensim.models.LdaModel.load(modelPath)
     logger.info("Started loading filtering the visual words probabilities...")
     # index is the topic id. the value is array of 4096 probabilities of each visiterm for the given topic.
@@ -144,7 +143,7 @@ if __name__ == '__main__':
     start = time.time()
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     config = FullTest()
-
+    
     test()
 
     timed = timedelta(seconds=time.time()-start)

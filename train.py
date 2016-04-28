@@ -39,6 +39,10 @@ class Config(object):
     model_folder = 'data/models/'
     chunksize = 2000
     dict_size= 0
+    best_n_visual_features= 100
+    test_result_path = 'data/results/'
+    test_result_file = None
+
 
 
 class DevMode(Config):
@@ -71,7 +75,7 @@ class DevTest(DevMode):
     dictionary_label = 'dev_test'
 
 class FullTest(FullMode):
-    range_of_documents_indeces = (270000, 310112)
+    range_of_documents_indeces = (0, 10)
     dictionary_label = 'full_test'
 
 def expandArrayWithWordScorePairs(word_score_tuples, scale_down_factor):
@@ -300,27 +304,27 @@ def createDictionary(extraLabel=""):
 def train():
     global config
     config = AwsTrain()
-    # return
+
     logger.info('MODE: ' + config.dictionary_label)
-    # visual_matrix = loadVisualMatrix(config)
-    # imgid2wordscoretuple = prepareTexts()
+    visual_matrix = loadVisualMatrix(config)
+    imgid2wordscoretuple = prepareTexts()
     
     # dictionary = corpora.Dictionary().load(getLastDictFileName())
     dictionary = createDictionary()
     config.dict_size=len(dictionary)
     logger.info('Dict loaded')
-    
 
-    # bow = BOW(dictionary=dictionary, input = MyCorpus(visual_matrix, imgid2wordscoretuple))
+
+    bow = BOW(dictionary=dictionary, input = MyCorpus(visual_matrix, imgid2wordscoretuple))
     corporaFname = 'data/corpora'+config.dictionary_label
-    # gensim.corpora.MmCorpus.serialize(corporaFname, bow)
+    gensim.corpora.MmCorpus.serialize(corporaFname, bow)
     bow = gensim.corpora.MmCorpus(corporaFname)
     logger.info('Corpora read')
 
     topics = config.lda_topics
     passes = config.lda_passes
     lda = models.LdaMulticore(corpus=bow, id2word=dictionary,
-        num_topics=topics, passes=passes, chunksize=config.chunksize)
+        num_topics=topics, passes=passes, chunksize=config.chunksize, workers=4)
     modelFname = config.model_folder+'lda_%i_topics_%i_passes_%s.%s.model'%(topics, passes, config.dictionary_label,pretty_current_time())
     lda.save(modelFname)
 

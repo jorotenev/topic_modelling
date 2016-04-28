@@ -71,6 +71,10 @@ def logExperiment(config, runtime):
         f.write(lineSep()+newline)
         f.write(pretty_current_time()+newline)
         f.write(config.dictionary_label +' @ '+ socket.gethostname())
+        if config.test_result_file:
+            f.write(newline)
+            f.write('Result file for test: '+str(config.test_result_file))
+
         f.write(newline)
         f.write('Range of docs: '+str(config.range_of_documents_indeces))
         f.write(newline)
@@ -106,3 +110,23 @@ def setLastDictFileName(fName):
 def getNumberOfWorkers():
     with open('.num_workers') as f:
         return int(f.readline().strip())
+
+def getVisualWordProbabilitiesForTopic(topic_probabilities,config):
+    """
+    it's just a view of a single topic of the model - to access more quickly the probabilities of all visiterm in the whole topic
+
+    given an array of (probability, words) pairs, look only for words which are actually labels for visual terms (e.g 'visiterm_1')
+    get the id from the label and put it in a list as a tuple together with the probability of the visiwor.
+    sort by the id(which is just an index with range 0-4096), then return list with just the probabilities.
+
+    :return: array with probabilities, where the index in array, matches the id from the visual term label
+    """
+    prefix = config.VISUAL_WORD_ID_PREFIX
+    result = [(int(w[len(prefix):]), p) for p, w in topic_probabilities if
+              len(w) > len(prefix) and w[0:len(prefix)] == prefix]
+    result.sort()  # sort on first key, which is the visual_term_id
+    return [p for i, p in result]
+
+def write_result_line_of_test(file, query_id, img_ids):
+    newline = '\n'
+    file.write('query_id ' +query_id+ ' img_ids ' + ' '.join(img_ids)+newline)
