@@ -8,7 +8,7 @@ import numpy as np
 import logging
 import gensim
 from gensim import corpora
-import gensim.models.ldamodel as models
+import gensim.models.ldamulticore as models
 import time
 from gensim.parsing.preprocessing import STOPWORDS
 from util import *
@@ -34,10 +34,10 @@ class Config(object):
     TEXTUAL_WORD_ID_PREFIX = 'text_word_'
     WORKERS = 10
     lda_passes = 4
-    lda_topics = 50
+    lda_topics = 500
     visual_matrix_suffix = '.converted_to_numpy.npy'
     model_folder = 'data/models/'
-    chunksize = 300
+    chunksize = 2000
     dict_size= 0
 
 
@@ -282,6 +282,9 @@ def createDictionary(extraLabel=""):
     # TODO note the optimization done on the dict - b4 ~700 000 tokens, now 610 000
     dic = Dictionary()
     d = corpora.Dictionary(dic)
+
+    d.filter_extremes(no_below=10, no_above=0.6, keep_n=None)
+    d.compactify()
     # add the visual terms as words in the vocabulary too
     d.add_documents([get_visual_terms_labels(config)])
     extraLabel = extraLabel+"_"+config.dictionary_label
@@ -302,10 +305,11 @@ def train():
     # visual_matrix = loadVisualMatrix(config)
     # imgid2wordscoretuple = prepareTexts()
     
-    dictionary = corpora.Dictionary().load(getLastDictFileName())
-    # dictionary = createDictionary()
+    # dictionary = corpora.Dictionary().load(getLastDictFileName())
+    dictionary = createDictionary()
     config.dict_size=len(dictionary)
     logger.info('Dict loaded')
+    
 
     # bow = BOW(dictionary=dictionary, input = MyCorpus(visual_matrix, imgid2wordscoretuple))
     corporaFname = 'data/corpora'+config.dictionary_label
@@ -316,7 +320,7 @@ def train():
     topics = config.lda_topics
     passes = config.lda_passes
     lda = models.LdaMulticore(corpus=bow, id2word=dictionary,
-        num_topics=topics, passes=passes, distributed=True, chunksize=config.chunksize)
+        num_topics=topics, passes=passes, chunksize=config.chunksize)
     modelFname = config.model_folder+'lda_%i_topics_%i_passes_%s.%s.model'%(topics, passes, config.dictionary_label,pretty_current_time())
     lda.save(modelFname)
 
