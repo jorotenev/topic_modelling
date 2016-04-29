@@ -20,8 +20,8 @@ class TestingCorpus(object):
     def __iter__(self):
         with open(self.fname) as text_documents:
             for i, text_line in enumerate(text_documents):
-                # if not inRange(i, self.rangeOfDocsToBeRead):
-                #     continue
+                if not text_line:
+                    continue
                 row_id, word_score_tuples = parseRawTextDocumentLine(text_line)
 
                 # the index of the rowIds will match with the yielded el, when this iter is enumarated
@@ -80,7 +80,8 @@ def givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs):
         index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
     index_sum_tuples.sort()
     index_sum_tuples.reverse()
-    return [(index,s) for s, index in index_sum_tuples[0:config.best_n_visual_features]]
+    max_score = index_sum_tuples[0][0]
+    return [(index,s/max_score) for s, index in index_sum_tuples[0:config.best_n_visual_features]]
 
 
 def filterVisualProbabilities(lda, modelFname):

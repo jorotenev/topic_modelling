@@ -133,4 +133,4 @@ def write_result_line_of_test(file, query_id, img_ids):
     newline = '\n'
     for img_id,score in img_ids:
 
-        file.write(str(query_id)+ ' 0 '+str(img_id )+ ' 0 ' +str(score)+newline)
+        file.write(str(query_id)+ ' 0 '+str(img_id )+ ' 0 ' +'%.1f'%score+newline)
