@@ -126,7 +126,7 @@ def test():
 
     modelFname = 'lda_1000_topics_1_passes_aws_train.10h31m_28Apr.model'
     modelPath = config.model_folder + modelFname
-    num_threads = 2
+    num_threads = 1000
     result_file_base_name = config.test_result_path+'/'+str(num_threads) +'/'+ pretty_current_time() + modelFname+'_'
     config.test_result_file = config.test_result_path + pretty_current_time() + modelFname+'.test_result'
     lda = gensim.models.LdaModel.load(modelPath)
