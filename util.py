@@ -129,4 +129,6 @@ def getVisualWordProbabilitiesForTopic(topic_probabilities,config):
 
 def write_result_line_of_test(file, query_id, img_ids):
     newline = '\n'
-    file.write('query_id ' +query_id+ ' img_ids ' + ' '.join(img_ids)+newline)
+    for img_id,score in img_ids:
+
+        file.write(query_id+ ' 0 '+img_id + ' 0 ' +score+newline)

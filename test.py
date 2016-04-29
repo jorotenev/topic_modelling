@@ -63,7 +63,7 @@ def findProbabilitiesVWordsGivenADocument(lda, topic_probabilities_for_doc, visi
         probs_of_vwords_given_a_document[index] = probability_of_visi_term
     return probs_of_vwords_given_a_document
 
-def givenProbsFindIdOfBestMatches(visual_matrix, probs):
+def givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs):
 
     """
     Find the most likely vwords based on the @probs and find in the @visual_matrix which row has the highest values for these vwords.
@@ -76,9 +76,10 @@ def givenProbsFindIdOfBestMatches(visual_matrix, probs):
     clipped_visual_features = visual_matrix[:, indeces_of_top_n]
     index_sum_tuples=[]
     for row_index in range(0,clipped_visual_features.shape[0]):
-        index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
+        if row_index>310112:
+            index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
     index_sum_tuples.sort()
-    return [index for s, index in index_sum_tuples[0:config.best_n_visual_features]]
+    return [(index,s) for s, index in index_sum_tuples[0:config.best_n_visual_features]]
 
 
 def filterVisualProbabilities(lda, modelFname):
@@ -103,9 +104,9 @@ def filterVisualProbabilities(lda, modelFname):
 def findBestImages(model=None, doc_topic_probabilities=None, vwords_probs_for_all_topics=None, visual_matrix=None, img_ids=None):
 
     probs_of_vwords_given_a_document = findProbabilitiesVWordsGivenADocument(model,doc_topic_probabilities, vwords_probs_for_all_topics)
-    best_img_indeces = givenProbsFindIdOfBestMatches(visual_matrix, probs_of_vwords_given_a_document)
+    best_img_indeces = givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs_of_vwords_given_a_document)
 
-    return [img_ids[i] for i in best_img_indeces]
+    return [(img_ids[i],score) for i,score in best_img_indeces]
 
 
 def test():
