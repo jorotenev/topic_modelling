@@ -75,9 +75,9 @@ def givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs):
     # get only the columns for which we care
     clipped_visual_features = visual_matrix[:, indeces_of_top_n]
     index_sum_tuples=[]
-    for row_index in range(0,clipped_visual_features.shape[0]):
-        if row_index>310112:
-            index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
+    for row_index in range(310111,clipped_visual_features.shape[0]):
+        # if row_index>310112:
+        index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
     index_sum_tuples.sort()
     index_sum_tuples.reverse()
     return [(index,s) for s, index in index_sum_tuples[0:config.best_n_visual_features]]
