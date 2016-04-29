@@ -79,6 +79,7 @@ def givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs):
         if row_index>310112:
             index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
     index_sum_tuples.sort()
+    index_sum_tuples.reverse()
     return [(index,s) for s, index in index_sum_tuples[0:config.best_n_visual_features]]
 
 
@@ -122,7 +123,7 @@ def test():
 
     # generate bow representation of the input
 
-    modelFname = 'lda_20_topics_4_passes_full_train.10h20m_27Apr.model'
+    modelFname = 'lda_1000_topics_1_passes_aws_train.10h31m_28Apr.model'
     modelPath = config.model_folder + modelFname
     num_threads = 2
     result_file_base_name = config.test_result_path+'/'+str(num_threads) +'/'+ pretty_current_time() + modelFname+'_'

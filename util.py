@@ -42,7 +42,9 @@ def loadVisualMatrix(config):
             vals = image_vector_line.split()
             assert len(vals) == config.VISUAL_WORD_DIM + 1 # + 1 for the img_id
             try:
-                image_features_matrix[row_index, :] = np.array([float(f) for f in vals[1:]], dtype=np.float64)
+                temp = np.array([float(f) for f in vals[1:]], dtype=np.float64)
+                image_features_matrix[row_index, :] = temp
+                pass
             except Exception as e:
                 logger.info('Stop with creating the matrix. Exception: %s' % str(e))
                 break
@@ -131,4 +133,4 @@ def write_result_line_of_test(file, query_id, img_ids):
     newline = '\n'
     for img_id,score in img_ids:
 
-        file.write(query_id+ ' 0 '+img_id + ' 0 ' +score+newline)
+        file.write(str(query_id)+ ' 0 '+str(img_id )+ ' 0 ' +str(score)+newline)
