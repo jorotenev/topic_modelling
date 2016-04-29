@@ -131,7 +131,8 @@ def test():
     modelFname = 'lda_1000_topics_1_passes_aws_train.10h31m_28Apr.model'
     modelPath = config.model_folder + modelFname
     num_threads = 100
-    result_file_base_name = config.test_result_path+'/'+str(num_threads) +'/'+ pretty_current_time() + modelFname+'_'
+    # result_file_base_name = config.test_result_path+'/'+str(num_threads) +'/'+ pretty_current_time() + modelFname+'_'
+    result_file_base_name = config.test_result_path+'/'+str(1) +'/'+ pretty_current_time() + modelFname+'_'
     config.test_result_file = config.test_result_path + pretty_current_time() + modelFname+'.test_result'
     logger.info("Started loading filtering the visual words probabilities...")
     # index is the topic id. the value is array of 4096 probabilities of each visiterm for the given topic.
@@ -143,21 +144,22 @@ def test():
     logger.info('The Visual matrix is clipped to 200 000')
 
     assert visual_matrix.shape[0] == last_index - first_index
-    for thread_id in range(num_threads):
-        if thread_id % 10 == 0:
-            # it becomes a bottleneck if all threads share the same resources.
-            # since we are doing read only, ok to make deep copies of the objects below
-            lda = gensim.models.LdaModel.load(modelPath)
-            probabilities_of_visual_terms_in_topics = filterVisualProbabilities(lda, modelFname)
-            visual_matrix_copy = np.array(visual_matrix, copy=True)
-            img_ids_copied=list(img_ids)
-        thread = myThread(result_file_base_name, num_threads, thread_id,visual_matrix_copy,lda,img_ids_copied,
-                          probabilities_of_visual_terms_in_topics,dictionary)
-        thread.start()
+    # for thread_id in range(num_threads):
+    #     if thread_id % 10 == 0:
+    #         # it becomes a bottleneck if all threads share the same resources.
+    #         # since we are doing read only, ok to make deep copies of the objects below
+    lda = gensim.models.LdaModel.load(modelPath)
+    probabilities_of_visual_terms_in_topics = filterVisualProbabilities(lda, modelFname)
+    visual_matrix_copy = np.array(visual_matrix, copy=True)
+    img_ids_copied=list(img_ids)
+    thread = myThread(result_file_base_name, num_threads, 0,visual_matrix,lda,img_ids,
+                      probabilities_of_visual_terms_in_topics,dictionary)
+    thread.start()
 
 
 
-class myThread (threading.Thread):
+
+class myThread ():
 # class myThread (threading.Thread):
 
     def __init__(self,
@@ -181,8 +183,8 @@ class myThread (threading.Thread):
         self.dictionary= dictionary
 
 
-    def run(self):
-        fName='data/main/TestData/'+str(self.all_threads_num)+'/'+str(self.thread_number)+'.txt'
+    def start(self):
+        fName='data/main/test_data_students.txt'
         corpus = TestingCorpus(fName)
 
         bows = BOW(dictionary=self.dictionary, input=corpus)
@@ -201,6 +203,7 @@ class myThread (threading.Thread):
                                               visual_matrix=self.visual_matrix,
                                               img_ids=self.img_ids)
                 write_result_line_of_test(resultFile, row_id, best_img_ids)
+
 
 
 if __name__ == '__main__':
