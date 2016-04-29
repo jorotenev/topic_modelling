@@ -4,6 +4,8 @@ import threading
 import logging
 from util import *
 logger = logging.getLogger('app')
+first_index = 310123
+last_index = 510122
 class TestingCorpus(object):
     """
     this class's __iter__ is used when we are testing our model.
@@ -75,9 +77,11 @@ def givenProbsFindIndexAndScoreOfBestMatches(visual_matrix, probs):
     # get only the columns for which we care
     clipped_visual_features = visual_matrix[:, indeces_of_top_n]
     index_sum_tuples=[]
-    for row_index in range(310111,clipped_visual_features.shape[0]):
+
+    #only use images we didnt see during training
+    for row_index in range(0,clipped_visual_features.shape[0]):
         # if row_index>310112:
-        index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index))
+        index_sum_tuples.append((np.sum(clipped_visual_features[row_index,:]), row_index+first_index))
     index_sum_tuples.sort()
     index_sum_tuples.reverse()
     max_score = index_sum_tuples[0][0]
@@ -126,26 +130,35 @@ def test():
 
     modelFname = 'lda_1000_topics_1_passes_aws_train.10h31m_28Apr.model'
     modelPath = config.model_folder + modelFname
-    num_threads = 1000
+    num_threads = 100
     result_file_base_name = config.test_result_path+'/'+str(num_threads) +'/'+ pretty_current_time() + modelFname+'_'
     config.test_result_file = config.test_result_path + pretty_current_time() + modelFname+'.test_result'
-    lda = gensim.models.LdaModel.load(modelPath)
     logger.info("Started loading filtering the visual words probabilities...")
     # index is the topic id. the value is array of 4096 probabilities of each visiterm for the given topic.
-    probabilities_of_visual_terms_in_topics = filterVisualProbabilities(lda, modelFname)
-    logger.info('Filtered the probabilities for topics for visual words. Size: %i' %len(probabilities_of_visual_terms_in_topics))
+
 
     # this is just the visual features, but loaded in a numpy array. loading from a serialized file for efficiency
-    visual_matrix = loadVisualMatrix(config)
-    assert visual_matrix.shape[0] == len(img_ids)
+    #training set only - 200 000
+    visual_matrix = loadVisualMatrix(config)[range(first_index, last_index), :]
+    logger.info('The Visual matrix is clipped to 200 000')
 
+    assert visual_matrix.shape[0] == last_index - first_index
     for thread_id in range(num_threads):
-        thread = myThread(result_file_base_name, num_threads, thread_id,visual_matrix,lda,img_ids,probabilities_of_visual_terms_in_topics,dictionary)
+        if thread_id % 10 == 0:
+            # it becomes a bottleneck if all threads share the same resources.
+            # since we are doing read only, ok to make deep copies of the objects below
+            lda = gensim.models.LdaModel.load(modelPath)
+            probabilities_of_visual_terms_in_topics = filterVisualProbabilities(lda, modelFname)
+            visual_matrix_copy = np.array(visual_matrix, copy=True)
+            img_ids_copied=list(img_ids)
+        thread = myThread(result_file_base_name, num_threads, thread_id,visual_matrix_copy,lda,img_ids_copied,
+                          probabilities_of_visual_terms_in_topics,dictionary)
         thread.start()
 
 
 
 class myThread (threading.Thread):
+# class myThread (threading.Thread):
 
     def __init__(self,
                  result_file_base_name,
@@ -173,7 +186,7 @@ class myThread (threading.Thread):
         corpus = TestingCorpus(fName)
 
         bows = BOW(dictionary=self.dictionary, input=corpus)
-
+        bows = list(bows)
         fname = self.result_file_base_name+'_chunk' + str(self.thread_number)
         with open(fname, 'w') as resultFile:
             logger.info("Beginning testing NOW :)")

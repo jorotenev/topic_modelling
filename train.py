@@ -1,29 +1,39 @@
 """
-The entry point for the main part of the project
+usaege
+$ python train.py
+File structure required - check the Config + *Mode classes.
+
+The entry point for the main part of the project.
+Check the train() method at the bottom for the actual logic.
 """
 from datetime import timedelta
-import json,logging
+import json,logging,logging,gensim,time,string
 import numpy as np
-
-import logging
-import gensim
 from gensim import corpora
 import gensim.models.ldamulticore as models
-import time
 from gensim.parsing.preprocessing import STOPWORDS
 from util import *
-import string
+
 english_alphabet = string.ascii_letters
 #GLOBALS
+
+# stores the configuration for the current run.
 config = None
 logger = logging.getLogger('app')
 
 def inRange(index, r):
+    """
+    checks if the index is in the range @r.
+    :param index:
+    :param r: tuple (int,int)
+    :return: bool
+    """
     min_r,max_r = r
     return index >= min_r and index < max_r
 def sizeOfRange(r):
     min_r, max_r = r
     return len(range(min_r, max_r))
+
 class Config(object):
     MIXED_DOCUMENT_OVERALL_LENGTH = 200
     TEXT_LINE_SUM_OF_SCORES = 100000  # as from the project description
@@ -43,14 +53,12 @@ class Config(object):
     test_result_path = 'data/results/'
     test_result_file = None
 
-
-
+# the Mode determines from where to take the data
 class DevMode(Config):
     text_documents_file_path = 'data/main/DevData/parsed.text'
     image_vectors_file_path = 'data/main/DevData/parsed.visual'
     img_ids_file_path = 'data/main/DevData/scaleconcept16.teaser_dev.ImgID.txt'
     number_of_img_ids = 3339
-
 
 class FullMode(Config):
     text_documents_file_path = 'data/main/Features/Textual/train_data.txt'
@@ -58,6 +66,7 @@ class FullMode(Config):
     img_ids_file_path = 'data/main/Features/scaleconcept16_ImgID.txt_Mod'
     number_of_img_ids = 510123
 
+# different chunks of the input text
 class AwsTrain(FullMode):
     range_of_documents_indeces = (0, 310112)
     dictionary_label = 'aws_train'
@@ -77,22 +86,6 @@ class DevTest(DevMode):
 class FullTest(FullMode):
     range_of_documents_indeces = (0, 10)
     dictionary_label = 'full_test'
-
-def expandArrayWithWordScorePairs(word_score_tuples, scale_down_factor):
-    """
-    Given an array with (word, score) tuples, return an array with words, considering the score of each word.
-    e.g. input [(car, 1000), (boat, 100)] -> output [car car car .... boat boat..]. len(output) = (1000 +100)/some constant
-    The score is scaled down with some constant. e.g. car 1000, wouldn't expand car 1000 times.
-    :param word_score_tuples: [(str,int),...]. e.g. [(car, 1000), (boat, 100)]
-    :param scale_down_factor: int - scale down the Score. e.g. if the score of car is 1000, we want to scale it down
-    so that we don't repeat  the word 1000 times, but less. Note that if score//scale_down_factor is <1, the word wouldnt be
-    expanded at all.
-    :return: array with the words from input repeated a number of times, based on their score
-    """
-    # TODO the score//SCALE... doesn't work visiterms
-    nested_result = [[word for _ in range(0, score // scale_down_factor)] for (word, score) in word_score_tuples]
-    return [word for sublist in nested_result for word in sublist] # flatten the list of lists
-
 
 def wordIsGarbage(word):
     for char in word:
@@ -114,6 +107,10 @@ def preprocessWordFromInputLine(word):
 
 
 def checkIfStringIsANumber(string):
+    """
+    this function is no longer used. left it just in case.
+    used to check if the string can be casted to a number
+    """
     result = False
     try:
         temp = float(string)
@@ -126,6 +123,7 @@ def checkIfStringIsANumber(string):
     except:
         pass
     return result
+
 def parseRawTextDocumentLine(line):
     """
     given a raw line representing a document (e.g. 000qUQAfomr0QAm4 100 pole 21113 fireman's 19956...)
@@ -156,16 +154,16 @@ def parseRawTextDocumentLine(line):
 
 def normalizeValuesForImgArray(arr, NORMALIZED_SUM):
     """
-    Each position at the vector marks a "word'. Since the vector_dim is the same of all vectors(usually 4096),
-    we can interpret the position in the vector as a word. the value at that position shows the number of occurances
+    Each position in the @arr marks a "word'. Since the vector_dim is the same of all vectors(usually 4096),
+    we can interpret the position in the vector as a word. the value at that position shows the number of occurrances
     of the word. We want to normalize the values (the sum should be always be some constant).
     Then, we normalize again, but with respect to the "text word" counts from the document collection.
-    This way, an occurance count for a visual term or a textual one are in the same scale.
-    :param occurances: the vector with floats
-    :return: normalied occurance counts for each visual word
+    This way, an occurrance count for a visual term or a textual one are in the same scale.
+    :param [(v_word_label,float)] arr: the arr with (label,occurance) e.g [('visiword_0',1.3), ('visiword_1', 4)]
+    :return: normalized occurrance counts for each visual word
     """
     # first normalize so that the sum of the visual terms ocuurances is a constant
-    # TODO the normalization returns ints, which is lossy normalization. The error on average for each visiterm is below 1.
+    # TODO the normalization returns ints, which is lossy normalization. However, The error, on average, for each visiterm is below 1.
 
     self_normalize_sum = 3000
     labels, occurances = zip(*arr)
@@ -189,10 +187,10 @@ def normalizeValuesForImgArray(arr, NORMALIZED_SUM):
 def processImg(floats):
     """
     the input is a vector like [wv1, wv2,...], where the value is the number of occurances of v1, v2...
-    this method will use the position in the vector to create a label, and repeat th
-    Given a line from the input file, parse it, and expand it
+    this method will use the position in the vector to create a label
+
     :param img_line:
-    :return: list with
+    :return: list with (visi_word_label, occurance) tuples
     """
 
     v = [('%s%i'%(config.VISUAL_WORD_ID_PREFIX, index), v) for index, v in enumerate(floats)]
@@ -208,11 +206,14 @@ def combineTextAndImageVectors(word_score_tuples, visiterm_occurances_tuples):
     sum_of_text_occurances = sum([occ for _,occ in word_score_tuples])
     normalized_img = normalizeValuesForImgArray(visiterm_occurances_tuples,  sum_of_text_occurances)
 
-    # todo make sure they have equal number of elements at the end
+
     return word_score_tuples + normalized_img
 
 
 def prepareTexts():
+    """
+    Reads the text documents and make a dict. The keys are the img ids, the values are array of (word, score) tuples,
+    """
     imgid2wordscoretuple = {}
 
     with open(config.text_documents_file_path) as text_documents:
@@ -229,9 +230,9 @@ def prepareTexts():
 class MyCorpus(object):
     """
     This class is used to load the coprus.
-    The corpus is all of our training data - the concatenation of a document with its image. The document and the
-    image are represented in a common vocaulary.
-    The iterator yields a single line - a document-image pair.
+
+
+    The iterator yields a single element - a document-image pair.
     """
     def __init__(self, visual_matrix, texts):
         self.visual_matrix = visual_matrix
@@ -247,7 +248,7 @@ class MyCorpus(object):
         Both arrays are concatenated, resulting in list with words in a common vocabulary, representing both the textual
         document and the image.
         :return: array with words(both textual and visual)in a common vocabulary (strings), representing the document-image pair.
-        e.g. ['car', 'car','car','wheel','visual_term_1_ID_OF_THE_TEXT_DOC').
+        e.g. [('car',100), ('visual_term_1',3). //word(both textual or visiword) and score tuples
         """
         with open(config.img_ids_file_path) as img_ids:
             # read a img line, using it's img_id, get the textual document too
@@ -283,7 +284,7 @@ def get_visual_terms_labels(config):
 
 
 def createDictionary(extraLabel=""):
-    # TODO note the optimization done on the dict - b4 ~700 000 tokens, now 610 000
+    # TODO in the report note the optimization done on the dict - it was ~700 000 workds, now ~90 000
     dic = Dictionary()
     d = corpora.Dictionary(dic)
 
@@ -308,13 +309,14 @@ def train():
     logger.info('MODE: ' + config.dictionary_label)
     visual_matrix = loadVisualMatrix(config)
     imgid2wordscoretuple = prepareTexts()
-    
+
+    #uncomment if loading previously loaded, and comment the next line
     # dictionary = corpora.Dictionary().load(getLastDictFileName())
     dictionary = createDictionary()
     config.dict_size=len(dictionary)
-    logger.info('Dict loaded')
+    logger.info('Dict read')
 
-
+    #comment this if loading from a previously serialised corpus(much quicker)
     bow = BOW(dictionary=dictionary, input = MyCorpus(visual_matrix, imgid2wordscoretuple))
     corporaFname = 'data/corpora'+config.dictionary_label
     gensim.corpora.MmCorpus.serialize(corporaFname, bow)
@@ -323,9 +325,11 @@ def train():
 
     topics = config.lda_topics
     passes = config.lda_passes
+    # start training
     lda = models.LdaMulticore(corpus=bow, id2word=dictionary,
         num_topics=topics, passes=passes, chunksize=config.chunksize, workers=4)
     modelFname = config.model_folder+'lda_%i_topics_%i_passes_%s.%s.model'%(topics, passes, config.dictionary_label,pretty_current_time())
+    # persist the model for later
     lda.save(modelFname)
 
 if __name__ == '__main__':
