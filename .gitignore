@@ -2,3 +2,4 @@ papers/*
 data/*
 utils/*
 .idea/
+__pycache__
